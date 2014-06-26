@@ -41,13 +41,24 @@ namespace PollingTimer
                 this.data = new Dictionary<string, object>();
             }
 
-            if (this.PrePolling == null
-                ||
-                this.AfterPolling == null
-                ||
-                this.OnPolling == null)
+            if (this.OnPolling == null)
             {
                 throw new ArgumentException("The polling event can not be null.");
+            }
+
+            if (this.data == null)
+            {
+                this.data = new Dictionary<string, object>();
+            }
+
+            if (this.PrePolling == null)
+            {
+                this.PrePolling = _data => { };
+            }
+
+            if (this.AfterPolling == null)
+            {
+                this.AfterPolling = _data => { };
             }
         }
 
