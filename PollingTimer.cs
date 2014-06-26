@@ -29,7 +29,7 @@ namespace PollingTimer
 
         #region Constructors
 
-        public PollingTimer(UnitProcessor prePolling, UnitProcessor afterPolling, PollingStoper polling, Dictionary<string, object> data)
+        public PollingTimer(UnitProcessor prePolling, PollingStoper polling, UnitProcessor afterPolling, Dictionary<string, object> data)
         {
             this.PrePolling = prePolling;
             this.AfterPolling = afterPolling;
@@ -51,8 +51,8 @@ namespace PollingTimer
             }
         }
 
-        public PollingTimer(UnitProcessor prePolling, UnitProcessor afterPolling, PollingStoper polling, Dictionary<string, object> data, long dueTime, long period)
-            : this(prePolling, afterPolling, polling, data)
+        public PollingTimer(UnitProcessor prePolling, PollingStoper polling, UnitProcessor afterPolling, Dictionary<string, object> data, long dueTime, long period)
+            : this(prePolling, polling, afterPolling, data)
         {
             this.dueTime = 0;
             this.period = 1000;
