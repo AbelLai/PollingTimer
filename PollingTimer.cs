@@ -17,7 +17,6 @@ namespace PollingTimer
         private Timer timer;
         private Dictionary<string, object> data;
         private bool done = false;
-        private AutoResetEvent autoEvent;
         private long dueTime = 0;
         private long period = 1000;
 
@@ -57,9 +56,8 @@ namespace PollingTimer
         {
             this.PrePolling(this.data);
 
-            this.autoEvent = new AutoResetEvent(true);
-
-            this.timer = new Timer(this.TimeoutCallback, this, this.dueTime, this.period);
+            //这里设置Timeout.Infinite只是为了timer只调用一次
+            this.timer = new Timer(this.TimeoutCallback, this, this.dueTime, Timeout.Infinite);
         }
 
         public bool Done()
@@ -82,8 +80,6 @@ namespace PollingTimer
         {
             PollingTimer timer = state as PollingTimer;
 
-            timer.autoEvent.WaitOne();
-
             if (!timer.done)
             {
                 if (timer.OnPolling(timer.data))
@@ -92,8 +88,12 @@ namespace PollingTimer
 
                     timer.AfterPolling(timer.data);
                 }
-
-                timer.autoEvent.Set();
+                else
+                {
+                    //由于事件仍需继续，这里改变timer，让timer在period时间之后再次触发一次。
+                    //这里这样的做法是为了防止OnPolling执行的时间过长，导致timer已经到了再次触发的时间再次触发，最后导致多个线程池的线程同时执行TimeoutCallback这个回调方法。
+                    timer.timer.Change(timer.period, Timeout.Infinite);
+                }
             }
         }
 
