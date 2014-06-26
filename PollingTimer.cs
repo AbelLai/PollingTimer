@@ -31,34 +31,14 @@ namespace PollingTimer
 
         public PollingTimer(UnitProcessor prePolling, PollingStoper polling, UnitProcessor afterPolling, Dictionary<string, object> data)
         {
-            this.PrePolling = prePolling;
-            this.AfterPolling = afterPolling;
+            this.PrePolling = prePolling == null ? _data => { } : prePolling;
+            this.AfterPolling = afterPolling == null ? _data => { } : afterPolling;
             this.OnPolling = polling;
-            this.data = data;
-
-            if (this.data == null)
-            {
-                this.data = new Dictionary<string, object>();
-            }
+            this.data = data == null ? new Dictionary<string, object>() : data;
 
             if (this.OnPolling == null)
             {
                 throw new ArgumentException("The polling event can not be null.");
-            }
-
-            if (this.data == null)
-            {
-                this.data = new Dictionary<string, object>();
-            }
-
-            if (this.PrePolling == null)
-            {
-                this.PrePolling = _data => { };
-            }
-
-            if (this.AfterPolling == null)
-            {
-                this.AfterPolling = _data => { };
             }
         }
 
