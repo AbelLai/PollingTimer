@@ -16,10 +16,8 @@ namespace PollingTimer
             A a = new A() { Value = "Empty" };
             B b = new B() { Value = "Empty" };
 
-            PollingTimer timer = new PollingTimer()
-            {
-                Data = new Dictionary<string, object> { { "A", a }, { "B", b } },
-                PrePolling = data =>
+            PollingTimer timer = new PollingTimer(
+                data =>
                 {
                     Console.WriteLine("Begin:");
 
@@ -27,7 +25,7 @@ namespace PollingTimer
 
                     data["A"] = (data["A"] as A).Value + " A";
                 },
-                OnPolling = data =>
+                data =>
                 {
                     Console.WriteLine(string.Format("{0} Begin: ----------------------------", counter + 1));
 
@@ -50,11 +48,12 @@ namespace PollingTimer
 
                     return false;
                 },
-                AfterPolling = data =>
+                data =>
                 {
                     Console.WriteLine("END!");
-                }
-            };
+                },
+                new Dictionary<string, object> { { "A", a }, { "B", b } }
+            );
 
             timer.Start();
 
